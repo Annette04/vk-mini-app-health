@@ -3,7 +3,7 @@ import bridge from '@vkontakte/vk-bridge-mock';
 import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
 import { useActiveVkuiLocation } from '@vkontakte/vk-mini-apps-router';
 
-import { Persik, Home } from './panels';
+import { Home, Profile, AddMeasurement, Medication, Statistics } from './panels';
 import { DEFAULT_VIEW_PANELS } from './routes';
 
 export const App = () => {
@@ -21,14 +21,16 @@ export const App = () => {
   }, []);
 
   return (
-    <SplitLayout>
-      <SplitCol>
-        <View activePanel={activePanel}>
-          <Home id="home" fetchedUser={fetchedUser} />
-          <Persik id="persik" />
-        </View>
-      </SplitCol>
-      {popout}
-    </SplitLayout>
+      <SplitLayout popout={popout}>
+        <SplitCol>
+          <View activePanel={activePanel}>
+            <Home id="home" fetchedUser={fetchedUser} />
+            <Profile id="profile" />
+            <AddMeasurement id="add_measurement" />
+            <Medication id="medication" />
+            <Statistics id="statistics" />
+          </View>
+        </SplitCol>
+      </SplitLayout>
   );
 };

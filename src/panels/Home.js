@@ -1,32 +1,50 @@
-import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar } from '@vkontakte/vkui';
+import { Panel, PanelHeader, Header, Button, Group, Cell, Div} from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
+import { Icon28UserOutline} from '@vkontakte/icons';
 
-export const Home = ({ id, fetchedUser }) => {
-  const { photo_200, city, first_name, last_name } = { ...fetchedUser };
+export const Home = ({ id }) => {
   const routeNavigator = useRouteNavigator();
 
   return (
-    <Panel id={id}>
-      <PanelHeader>Главная</PanelHeader>
-      {fetchedUser && (
-        <Group header={<Header size="s">User Data Fetched with VK Bridge</Header>}>
-          <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title}>
-            {`${first_name} ${last_name}`}
-          </Cell>
-        </Group>
-      )}
+      <Panel id={id}>
+        <PanelHeader>Здоровье</PanelHeader>
 
-      <Group header={<Header size="s">Navigation Example</Header>}>
-        <Div>
-          <Button stretched size="l" mode="secondary" onClick={() => routeNavigator.push('persik')}>
-            Покажите Персика, пожалуйста!
-          </Button>
-        </Div>
-      </Group>
-    </Panel>
+        <Group header={<Header mode="secondary">Основные функции</Header>}>
+          <Div>
+            <Cell
+                before={<Icon28UserOutline />}
+                onClick={() => routeNavigator.push('profile')}
+            >
+              Мой профиль
+            </Cell>
+            <Button
+                /*before={<Icon28HeartOutline />}*/
+                onClick={() => routeNavigator.push('add_measurement')}
+            >
+              Добавить показатели
+            </Button>
+            <Button
+                /*before={<Icon28PillOutline />}*/
+                onClick={() => routeNavigator.push('medication')}
+            >
+              Напоминания о лекарствах
+            </Button>
+            <Button
+                /*before={<Icon28ChartOutline />}*/
+                onClick={() => routeNavigator.push('statistics')}
+            >
+              Статистика
+            </Button>
+          </Div>
+        </Group>
+      </Panel>
   );
 };
+
+/*Home.propTypes = {
+  id: PropTypes.string.isRequired,
+};*/
 
 Home.propTypes = {
   id: PropTypes.string.isRequired,
