@@ -1,0 +1,21 @@
+.button-in-home-screen {
+   margin-top: 1%;
+   border-radius: 10px;
+   border-bottom-color: black;
+}
+
+.button-in-home-screen-2 {
+   margin-top: 1%;
+}
+.title1 {
+   font-size: 18px;
+   text-decoration: underline;
+}
+
+.placeholder {
+   border: 1px solid black; /* или любой другой цвет */
+   border-radius: 8px; /* скругление углов */
+   padding: 16px; /* внутренние отступы */
+   margin-bottom: 16px; /* отступ снизу */
+   background: #ffffff; /* белый фон (или другой) */
+}
