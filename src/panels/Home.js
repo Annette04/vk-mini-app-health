@@ -13,25 +13,18 @@ export const Home = ({ id, fetchedUser }) => {
   return (
       <Panel id={id}>
         <PanelHeader>Дневник здоровья</PanelHeader>
-        {/*{fetchedUser && (
-            <Group header={<Header size="s">User Data Fetched with VK Bridge</Header>}>
-              <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title}>
-                {`${first_name} ${last_name}`}
-              </Cell>
-            </Group>
-        )}*/}
-        <Group /*header={<Header mode="secondary">Основные функции</Header>}*/>
+        <Group>
           <Div>
-            <h2>Мой профиль</h2>
+            <div className="title-home">Мой профиль</div>
             <div className="placeholder">
               <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title}>
                 {`${first_name} ${last_name}`}
               </Cell>
 
               <div className="title1">Данные пользователя:</div>
-              {info && <div>Возраст: {info.age}</div>}
-              {info && <div>Рост: {info.height}</div>}
-              {info && <div>Вес: {info.weight}</div>}
+              {info && <div className="profile-info"><b>Возраст:</b> {info.age}</div>}
+              {info && <div className="profile-info"><b>Рост:</b> {info.height}</div>}
+              {info && <div className="profile-info"><b>Вес:</b> {info.weight}</div>}
               <Button
                   className="button-in-home-screen"
                   onClick={() => routeNavigator.push('profile')}
@@ -40,12 +33,14 @@ export const Home = ({ id, fetchedUser }) => {
               </Button>
             </div>
             <Button
+                stretched size="l"
                 onClick={() => routeNavigator.push('add_measurement')}
             >
               Добавить показатели
             </Button>
             <div></div>
             <Button
+                stretched size="l"
                 className="button-in-home-screen-2"
                 onClick={() => routeNavigator.push('medication')}
             >
@@ -53,6 +48,7 @@ export const Home = ({ id, fetchedUser }) => {
             </Button>
             <div></div>
             <Button
+                stretched size="l"
                 className="button-in-home-screen-2"
                 onClick={() => routeNavigator.push('statistics')}
             >

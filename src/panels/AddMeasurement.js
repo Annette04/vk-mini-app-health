@@ -1,4 +1,4 @@
-import { Panel, PanelHeader, FormItem, Input, Button, Group, Div, Select, PanelHeaderBack } from '@vkontakte/vkui';
+import { Panel, PanelHeader, FormItem, Input, Button, Group, Div, PanelHeaderBack, Tabs, TabsItem } from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -19,11 +19,50 @@ export const AddMeasurement = ({ id }) => {
         setMeasurement(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleTypeChange = (type) => {
+        setMeasurement(prev => ({
+            ...prev,
+            type,
+            value1: '',
+            value2: ''
+        }));
+    };
+
+    const resetForm = () => {
+        setMeasurement({
+            type: measurement.type, // сохраняем текущий тип
+            value1: '',
+            value2: '',
+            date: new Date().toISOString().split('T')[0],
+            time: new Date().toTimeString().substring(0, 5),
+            notes: ''
+        });
+    };
+
     const handleSubmit = () => {
+        // Проверяем заполнение обязательных полей
+        if (
+            (measurement.type === 'pressure' && (!measurement.value1 || !measurement.value2)) ||
+            (measurement.type !== 'pressure' && !measurement.value1)
+        ) {
+            alert('Заполните все обязательные поля');
+            return;
+        }
+
+        // Получаем текущие данные из localStorage
         const measurements = JSON.parse(localStorage.getItem('healthMeasurements') || '[]');
+
+        // Добавляем новые данные
         measurements.push(measurement);
+
+        // Сохраняем обновленные данные
         localStorage.setItem('healthMeasurements', JSON.stringify(measurements));
-        routeNavigator.back();
+
+        // Показываем уведомление
+        alert("Данные успешно сохранены");
+
+        // Очищаем форму
+        resetForm();
     };
 
     return (
@@ -34,17 +73,32 @@ export const AddMeasurement = ({ id }) => {
 
             <Group>
                 <FormItem top="Тип показателя">
-                    <Select
-                        name="type"
-                        value={measurement.type}
-                        onChange={handleChange}
-                        options={[
-                            { label: 'Давление', value: 'pressure' },
-                            { label: 'Пульс', value: 'pulse' },
-                            { label: 'Сахар в крови', value: 'glucose' },
-                            { label: 'Настроение', value: 'mood' }
-                        ]}
-                    />
+                    <Tabs>
+                        <TabsItem
+                            selected={measurement.type === 'pressure'}
+                            onClick={() => handleTypeChange('pressure')}
+                        >
+                            Давление
+                        </TabsItem>
+                        <TabsItem
+                            selected={measurement.type === 'pulse'}
+                            onClick={() => handleTypeChange('pulse')}
+                        >
+                            Пульс
+                        </TabsItem>
+                        <TabsItem
+                            selected={measurement.type === 'glucose'}
+                            onClick={() => handleTypeChange('glucose')}
+                        >
+                            Сахар
+                        </TabsItem>
+                        <TabsItem
+                            selected={measurement.type === 'mood'}
+                            onClick={() => handleTypeChange('mood')}
+                        >
+                            Настроение
+                        </TabsItem>
+                    </Tabs>
                 </FormItem>
 
                 {measurement.type === 'pressure' && (
