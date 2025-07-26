@@ -29,3 +29,33 @@
    margin-bottom: 16px; /* отступ снизу */
    background: #ffffff; /* белый фон (или другой) */
 }
+
+/* Показатели здоровья */
+.health-indicator-card {
+   margin-bottom: 12px;
+   border-radius: 8px;
+   padding: 12px;
+}
+
+.health-indicator-normal {
+   background-color: limegreen;
+   color: white;
+}
+
+.health-indicator-warning {
+   background-color: orange;
+   color: white;
+}
+
+.health-indicator-danger {
+   background-color: orangered;
+   color: white;
+}
+
+.date-selector {
+   margin-bottom: 1%;
+}
+
+.date-selector-normal {
+   margin-top: 1%;
+}

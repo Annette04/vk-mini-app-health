@@ -33,37 +33,32 @@ export const Statistics = ({ id }) => {
             </PanelHeader>
 
             <Group>
-                <HorizontalScroll>
-                    <Tabs>
-                        <TabsItem
-                            selected={activeTab === 'pressure'}
-                            onClick={() => setActiveTab('pressure')}
-                        >
-                            Давление
-                        </TabsItem>
-                        <TabsItem
-                            selected={activeTab === 'pulse'}
-                            onClick={() => setActiveTab('pulse')}
-                        >
-                            Пульс
-                        </TabsItem>
-                        <TabsItem
-                            selected={activeTab === 'glucose'}
-                            onClick={() => setActiveTab('glucose')}
-                        >
-                            Сахар
-                        </TabsItem>
-                        <TabsItem
-                            selected={activeTab === 'mood'}
-                            onClick={() => setActiveTab('mood')}
-                        >
-                            Настроение
-                        </TabsItem>
-                    </Tabs>
-                </HorizontalScroll>
-            </Group>
-
-            <Group>
+                <Tabs>
+                    <TabsItem
+                        selected={activeTab === 'pressure'}
+                        onClick={() => setActiveTab('pressure')}
+                    >
+                        Давление
+                    </TabsItem>
+                    <TabsItem
+                        selected={activeTab === 'pulse'}
+                        onClick={() => setActiveTab('pulse')}
+                    >
+                        Пульс
+                    </TabsItem>
+                    <TabsItem
+                        selected={activeTab === 'glucose'}
+                        onClick={() => setActiveTab('glucose')}
+                    >
+                        Сахар
+                    </TabsItem>
+                    <TabsItem
+                        selected={activeTab === 'mood'}
+                        onClick={() => setActiveTab('mood')}
+                    >
+                        Настроение
+                    </TabsItem>
+                </Tabs>
                 <Div style={{ height: '300px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart

@@ -14,7 +14,7 @@ export const Medication = ({ id }) => {
     });
 
     useEffect(() => {
-        const savedMeds = JSON.parse(localStorage.getItem('medications') || []);
+        const savedMeds = JSON.parse(localStorage.getItem('medications') || '[]');
         setMedications(savedMeds);
     }, []);
 
@@ -31,6 +31,11 @@ export const Medication = ({ id }) => {
     };
 
     const addMedication = () => {
+        if (!newMed.name || !newMed.dosage || newMed.times.length === 0 || !newMed.days.some(day => day)) {
+            alert('Заполните все обязательные поля');
+            return;
+        }
+
         const updatedMeds = [...medications, newMed];
         setMedications(updatedMeds);
         localStorage.setItem('medications', JSON.stringify(updatedMeds));
@@ -71,12 +76,24 @@ export const Medication = ({ id }) => {
 
                 <FormItem top="Время приема">
                     {newMed.times.map((time, index) => (
-                        <Input
-                            key={index}
-                            type="time"
-                            value={time}
-                            onChange={(e) => handleTimeChange(index, e.target.value)}
-                        />
+                        <div key={index} style={{ marginBottom: 8 }}>
+                            <Input
+                                type="time"
+                                value={time}
+                                onChange={(e) => handleTimeChange(index, e.target.value)}
+                            />
+                            <Button
+                                mode="tertiary"
+                                size="s"
+                                onClick={() => {
+                                    const newTimes = newMed.times.filter((_, i) => i !== index);
+                                    setNewMed({ ...newMed, times: newTimes });
+                                }}
+                                style={{ marginLeft: 8 }}
+                            >
+                                Удалить
+                            </Button>
+                        </div>
                     ))}
                     <Button
                         size="m"
@@ -88,15 +105,17 @@ export const Medication = ({ id }) => {
                 </FormItem>
 
                 <FormItem top="Дни недели">
-                    {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
-                        <Checkbox
-                            key={day}
-                            checked={newMed.days[index]}
-                            onChange={() => handleDayChange(index)}
-                        >
-                            {day}
-                        </Checkbox>
-                    ))}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                        {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day, index) => (
+                            <Checkbox
+                                key={day}
+                                checked={newMed.days[index]}
+                                onChange={() => handleDayChange(index)}
+                            >
+                                {day}
+                            </Checkbox>
+                        ))}
+                    </div>
                 </FormItem>
 
                 <Div>
@@ -106,22 +125,24 @@ export const Medication = ({ id }) => {
                 </Div>
             </Group>
 
-            <Group header={<Header mode="secondary">Текущие напоминания</Header>}>
-                {medications.map((med, index) => (
-                    <Div key={index}>
-                        <div>{med.name} - {med.dosage}</div>
-                        <div>Время: {med.times.join(', ')}</div>
-                        <div>Дни: {med.days.map((day, i) => day ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][i] : null).filter(Boolean).join(', ')}</div>
-                        <Button
-                            mode="destructive"
-                            size="s"
-                            onClick={() => removeMedication(index)}
-                        >
-                            Удалить
-                        </Button>
-                    </Div>
-                ))}
-            </Group>
+            {medications.length > 0 && (
+                <Group header={<Header mode="secondary">Текущие напоминания</Header>}>
+                    {medications.map((med, index) => (
+                        <Div key={index} style={{ padding: 12, border: '1px solid var(--button_secondary_background)', borderRadius: 8, marginBottom: 8 }}>
+                            <div style={{ fontWeight: 500, marginBottom: 4 }}>{med.name} - {med.dosage}</div>
+                            <div style={{ marginBottom: 4 }}>Время: {med.times.join(', ')}</div>
+                            <div style={{ marginBottom: 8 }}>Дни: {med.days.map((day, i) => day ? ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][i] : null).filter(Boolean).join(', ')}</div>
+                            <Button
+                                mode="destructive"
+                                size="s"
+                                onClick={() => removeMedication(index)}
+                            >
+                                Удалить
+                            </Button>
+                        </Div>
+                    ))}
+                </Group>
+            )}
         </Panel>
     );
 };

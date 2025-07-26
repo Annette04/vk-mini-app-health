@@ -54,6 +54,13 @@ export const Home = ({ id, fetchedUser }) => {
             >
               Статистика
             </Button>
+            <Button
+                stretched size="l"
+                className="button-in-home-screen-2"
+                onClick={() => routeNavigator.push('current')}
+            >
+              Текущие показатели
+            </Button>
           </Div>
         </Group>
       </Panel>

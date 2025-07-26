@@ -15,7 +15,8 @@ export const DEFAULT_VIEW_PANELS = {
   PROFILE: 'profile',
   ADD_MEASUREMENT: 'add_measurement',
   MEDICATION: 'medication',
-  STATISTICS: 'statistics'
+  STATISTICS: 'statistics',
+  CURRENT: 'current'
 };
 
 export const routes = RoutesConfig.create([
@@ -26,6 +27,7 @@ export const routes = RoutesConfig.create([
       createPanel(DEFAULT_VIEW_PANELS.ADD_MEASUREMENT, `/${DEFAULT_VIEW_PANELS.ADD_MEASUREMENT}`, []),
       createPanel(DEFAULT_VIEW_PANELS.MEDICATION, `/${DEFAULT_VIEW_PANELS.MEDICATION}`, []),
       createPanel(DEFAULT_VIEW_PANELS.STATISTICS, `/${DEFAULT_VIEW_PANELS.STATISTICS}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.CURRENT, `/${DEFAULT_VIEW_PANELS.CURRENT}`, []),
     ]),
   ]),
 ]);

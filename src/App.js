@@ -3,7 +3,7 @@ import bridge from '@vkontakte/vk-bridge-mock';
 import { View, SplitLayout, SplitCol, ScreenSpinner } from '@vkontakte/vkui';
 import { useActiveVkuiLocation } from '@vkontakte/vk-mini-apps-router';
 
-import { Home, Profile, AddMeasurement, Medication, Statistics } from './panels';
+import { Home, Profile, AddMeasurement, Medication, Statistics, Current } from './panels';
 import { DEFAULT_VIEW_PANELS } from './routes';
 
 export const App = () => {
@@ -29,6 +29,7 @@ export const App = () => {
             <AddMeasurement id="add_measurement" />
             <Medication id="medication" />
             <Statistics id="statistics" />
+            <Current id="current" />
           </View>
         </SplitCol>
       </SplitLayout>

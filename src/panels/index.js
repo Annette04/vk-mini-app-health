@@ -3,3 +3,4 @@ export { Profile } from './Profile';
 export { AddMeasurement } from './AddMeasurement';
 export { Medication } from './Medication';
 export { Statistics } from './Statistics';
+export { Current } from './Current';
