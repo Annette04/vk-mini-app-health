@@ -1,4 +1,14 @@
-import { Panel, PanelHeader, FormItem, Input, Button, Group, Div, PanelHeaderBack } from '@vkontakte/vkui';
+import {
+    Panel,
+    PanelHeader,
+    FormItem,
+    Input,
+    Button,
+    Group,
+    Div,
+    PanelHeaderBack,
+    Radio
+} from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -6,6 +16,7 @@ import { useState, useEffect } from 'react';
 export const Profile = ({ id }) => {
     const routeNavigator = useRouteNavigator();
     const [formData, setFormData] = useState({
+        gender: '', // 'male' или 'female'
         age: '',
         height: '',
         weight: ''
@@ -24,6 +35,10 @@ export const Profile = ({ id }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleGenderChange = (e) => {
+        setFormData(prev => ({ ...prev, gender: e.target.value }));
+    };
+
     const handleSubmit = () => {
         localStorage.setItem('healthProfile', JSON.stringify(formData));
         routeNavigator.back();
@@ -36,12 +51,33 @@ export const Profile = ({ id }) => {
             </PanelHeader>
 
             <Group>
+                <FormItem top="Пол">
+                    <Radio
+                        name="gender"
+                        value="male"
+                        checked={formData.gender === 'male'}
+                        onChange={handleGenderChange}
+                        style={{ marginBottom: 8 }}
+                    >
+                        Мужской
+                    </Radio>
+                    <Radio
+                        name="gender"
+                        value="female"
+                        checked={formData.gender === 'female'}
+                        onChange={handleGenderChange}
+                    >
+                        Женский
+                    </Radio>
+                </FormItem>
+
                 <FormItem top="Возраст">
                     <Input
                         type="number"
                         name="age"
                         value={formData.age}
                         onChange={handleChange}
+                        placeholder="Введите возраст"
                     />
                 </FormItem>
                 <FormItem top="Рост (см)">
@@ -50,6 +86,7 @@ export const Profile = ({ id }) => {
                         name="height"
                         value={formData.height}
                         onChange={handleChange}
+                        placeholder="Введите рост"
                     />
                 </FormItem>
                 <FormItem top="Вес (кг)">
@@ -58,11 +95,17 @@ export const Profile = ({ id }) => {
                         name="weight"
                         value={formData.weight}
                         onChange={handleChange}
+                        placeholder="Введите вес"
                     />
                 </FormItem>
 
                 <Div>
-                    <Button size="l" stretched onClick={handleSubmit}>
+                    <Button
+                        size="l"
+                        stretched
+                        onClick={handleSubmit}
+                        disabled={!formData.gender}
+                    >
                         Сохранить
                     </Button>
                 </Div>

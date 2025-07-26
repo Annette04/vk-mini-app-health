@@ -1,5 +1,4 @@
 .button-in-home-screen {
-   margin-top: 1%;
    border-radius: 10px;
 }
 
@@ -20,6 +19,7 @@
 
 .profile-info {
    margin-left: 1%;
+   margin-bottom: 0.3%;
 }
 
 .placeholder {

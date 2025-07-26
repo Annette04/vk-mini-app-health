@@ -1,4 +1,4 @@
-import {Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar} from '@vkontakte/vkui';
+import {Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, Card} from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 
@@ -9,6 +9,43 @@ export const Home = ({ id, fetchedUser }) => {
   // Получаем данные из localStorage и парсим их в объект
   const infoString = localStorage.getItem("healthProfile");
   const info = infoString ? JSON.parse(infoString) : null;
+
+  // Функция для расчета ИМТ
+  const calculateBMI = () => {
+    if (!info || !info.height || !info.weight) return null;
+
+    // Переводим рост из см в метры
+    const heightInMeters = info.height / 100;
+    // Рассчитываем ИМТ
+    const bmi = (info.weight / (heightInMeters * heightInMeters)).toFixed(1);
+
+    return bmi;
+  };
+
+  // Функция для определения категории ИМТ
+  const getBMICategory = (bmi) => {
+    if (!bmi) return '';
+
+    if (bmi < 18.5) return ' - Недостаточный вес';
+    if (bmi >= 18.5 && bmi < 25) return ' - Нормальный вес';
+    if (bmi >= 25 && bmi < 30) return ' - Избыточный вес';
+    return ' - Ожирение';
+  };
+
+  const bmi = calculateBMI();
+  const bmiCategory = getBMICategory(bmi);
+
+  // Определяем статус ИМТ для стилизации карточки
+  const getBMIStatus = (bmi) => {
+    if (!bmi) return 'no-data';
+
+    if (bmi < 18.5) return 'low';
+    if (bmi >= 18.5 && bmi < 25) return 'normal';
+    if (bmi >= 25 && bmi < 30) return 'warning';
+    return 'danger';
+  };
+
+  const bmiStatus = getBMIStatus(bmi);
 
   return (
       <Panel id={id}>
@@ -23,8 +60,30 @@ export const Home = ({ id, fetchedUser }) => {
 
               <div className="title1">Данные пользователя:</div>
               {info && <div className="profile-info"><b>Возраст:</b> {info.age}</div>}
-              {info && <div className="profile-info"><b>Рост:</b> {info.height}</div>}
-              {info && <div className="profile-info"><b>Вес:</b> {info.weight}</div>}
+              {info && <div className="profile-info"><b>Пол:</b> {info.gender === "male" ? "мужской" : "женский"}</div>}
+              {info && <div className="profile-info"><b>Рост:</b> {info.height} см</div>}
+              {info && <div className="profile-info"><b>Вес:</b> {info.weight} кг</div>}
+              {/*{bmi && (
+                  <div className="profile-info">
+                    <b>Индекс массы тела:</b> {bmi}{bmiCategory}
+                  </div>
+              )}*/}
+              {/* Карточка ИМТ */}
+              {bmi && (
+                  <>
+                    <Card
+                        style={{ marginBottom: 16, padding: 12 }}
+                        className={
+                          bmiStatus === 'danger' ? 'health-indicator-danger' :
+                              bmiStatus === 'warning' ? 'health-indicator-warning' :
+                                  bmiStatus === 'low' ? 'health-indicator-danger' :
+                                      'health-indicator-normal'
+                        }
+                    >
+                      <b>Индекс массы тела:</b> {bmi}{bmiCategory}
+                    </Card>
+                  </>
+              )}
               <Button
                   className="button-in-home-screen"
                   onClick={() => routeNavigator.push('profile')}
