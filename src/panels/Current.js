@@ -29,7 +29,12 @@ export const Current = ({ id }) => {
 
     useEffect(() => {
         const savedMeasurements = JSON.parse(localStorage.getItem('healthMeasurements') || '[]');
-        setMeasurements(savedMeasurements);
+        // Добавляем временную метку для каждой записи
+        const measurementsWithTimestamps = savedMeasurements.map(m => ({
+            ...m,
+            timestamp: new Date(`${m.date}T${m.time}`).getTime()
+        }));
+        setMeasurements(measurementsWithTimestamps);
     }, []);
 
     useEffect(() => {
@@ -37,14 +42,14 @@ export const Current = ({ id }) => {
             const dateString = selectedDate.toISOString().split('T')[0];
             const dateData = measurements.filter(m => m.date === dateString);
 
-            // Сортируем данные по времени (новые сверху)
-            const sortByTime = (a, b) => new Date(b.time) - new Date(a.time);
+            // Сортировка по убыванию timestamp (новые сверху)
+            const sortByTimestampDesc = (a, b) => b.timestamp - a.timestamp;
 
             const groupedData = {
-                pressure: dateData.filter(m => m.type === 'pressure').sort(sortByTime),
-                pulse: dateData.filter(m => m.type === 'pulse').sort(sortByTime),
-                glucose: dateData.filter(m => m.type === 'glucose').sort(sortByTime),
-                mood: dateData.filter(m => m.type === 'mood').sort(sortByTime)
+                pressure: dateData.filter(m => m.type === 'pressure').sort(sortByTimestampDesc),
+                pulse: dateData.filter(m => m.type === 'pulse').sort(sortByTimestampDesc),
+                glucose: dateData.filter(m => m.type === 'glucose').sort(sortByTimestampDesc),
+                mood: dateData.filter(m => m.type === 'mood').sort(sortByTimestampDesc)
             };
 
             setDailyData(groupedData);
@@ -96,6 +101,11 @@ export const Current = ({ id }) => {
         }
     };
 
+    const formatTime = (timeStr) => {
+        const [hours, minutes] = timeStr.split(':');
+        return `${hours}:${minutes}`;
+    };
+
     return (
         <Panel id={id}>
             <PanelHeader before={<PanelHeaderBack onClick={() => routeNavigator.back()} />}>
@@ -130,7 +140,7 @@ export const Current = ({ id }) => {
                                                 'health-indicator-normal'}>
                                         <Text weight="semibold">{item.value1}/{item.value2} мм рт. ст.</Text>
                                         <Text>
-                                            {analysis.message} ({item.time})
+                                            {analysis.message} {formatTime(item.time)}
                                         </Text>
                                     </Card>
                                 );
@@ -151,7 +161,7 @@ export const Current = ({ id }) => {
                                                 'health-indicator-normal'}>
                                         <Text weight="semibold">{item.value1} уд/мин</Text>
                                         <Text>
-                                            {analysis.message} ({item.time})
+                                            {analysis.message} {formatTime(item.time)}
                                         </Text>
                                     </Card>
                                 );
@@ -172,7 +182,7 @@ export const Current = ({ id }) => {
                                                 'health-indicator-normal'}>
                                         <Text weight="semibold">{item.value1} ммоль/л</Text>
                                         <Text>
-                                            {analysis.message} ({item.time})
+                                            {analysis.message} {formatTime(item.time)}
                                         </Text>
                                     </Card>
                                 );
@@ -193,7 +203,7 @@ export const Current = ({ id }) => {
                                                 'health-indicator-warning' }>
                                         <Text weight="semibold">{item.value1}/10</Text>
                                         <Text>
-                                            {analysis.message} ({item.time})
+                                            {analysis.message} {formatTime(item.time)}
                                         </Text>
                                     </Card>
                                 );

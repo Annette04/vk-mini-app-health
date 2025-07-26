@@ -134,7 +134,7 @@ export const AddMeasurement = ({ id }) => {
                 )}
 
                 {measurement.type === 'glucose' && (
-                    <FormItem top="Сахар в крови (ммоль/л)">
+                    <FormItem top="Сахар в крови натощак (ммоль/л)">
                         <Input
                             type="number"
                             name="value1"
