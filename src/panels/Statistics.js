@@ -3,6 +3,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getFromCloud } from '../utils/vkCloudStorage';
 
 export const Statistics = ({ id }) => {
     const routeNavigator = useRouteNavigator();
@@ -11,8 +12,12 @@ export const Statistics = ({ id }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     useEffect(() => {
-        const savedMeasurements = JSON.parse(localStorage.getItem('healthMeasurements') || '[]');
-        setMeasurements(savedMeasurements);
+        const fetchMeasurements = async () => {
+            const savedMeasurements = await getFromCloud('healthMeasurements') || [];
+            setMeasurements(savedMeasurements);
+        };
+
+        fetchMeasurements();
     }, []);
 
     const formatDate = (dateStr) => {

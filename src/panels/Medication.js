@@ -2,6 +2,7 @@ import { Panel, PanelHeader, FormItem, Input, Button, Group, Div, Checkbox, Pane
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { getFromCloud, setToCloud } from '../utils/vkCloudStorage';
 
 export const Medication = ({ id }) => {
     const routeNavigator = useRouteNavigator();
@@ -14,9 +15,56 @@ export const Medication = ({ id }) => {
     });
 
     useEffect(() => {
-        const savedMeds = JSON.parse(localStorage.getItem('medications') || '[]');
-        setMedications(savedMeds);
+        const fetchMedications = async () => {
+            const savedMeds = await getFromCloud('medications') || [];
+            setMedications(savedMeds);
+        };
+
+        fetchMedications();
     }, []);
+
+    const addMedication = async () => {
+        if (!newMed.name || !newMed.dosage || newMed.times.length === 0 || !newMed.days.some(day => day)) {
+            alert('Заполните все обязательные поля');
+            return;
+        }
+
+        try {
+            const updatedMeds = [...medications, newMed];
+            const success = await setToCloud('medications', updatedMeds);
+
+            if (success) {
+                setMedications(updatedMeds);
+                setNewMed({
+                    name: '',
+                    dosage: '',
+                    times: [],
+                    days: Array(7).fill(false)
+                });
+            } else {
+                alert('Ошибка при сохранении');
+            }
+        } catch (error) {
+            console.error('Error adding medication:', error);
+            alert('Произошла ошибка');
+        }
+    };
+
+    const removeMedication = async (index) => {
+        try {
+            const updatedMeds = medications.filter((_, i) => i !== index);
+            const success = await setToCloud('medications', updatedMeds);
+
+            if (success) {
+                setMedications(updatedMeds);
+            } else {
+                alert('Ошибка при удалении');
+            }
+        } catch (error) {
+            console.error('Error removing medication:', error);
+            alert('Произошла ошибка');
+        }
+    };
 
     const handleTimeChange = (index, value) => {
         const newTimes = [...newMed.times];
@@ -28,29 +76,6 @@ export const Medication = ({ id }) => {
         const newDays = [...newMed.days];
         newDays[index] = !newDays[index];
         setNewMed({ ...newMed, days: newDays });
-    };
-
-    const addMedication = () => {
-        if (!newMed.name || !newMed.dosage || newMed.times.length === 0 || !newMed.days.some(day => day)) {
-            alert('Заполните все обязательные поля');
-            return;
-        }
-
-        const updatedMeds = [...medications, newMed];
-        setMedications(updatedMeds);
-        localStorage.setItem('medications', JSON.stringify(updatedMeds));
-        setNewMed({
-            name: '',
-            dosage: '',
-            times: [],
-            days: Array(7).fill(false)
-        });
-    };
-
-    const removeMedication = (index) => {
-        const updatedMeds = medications.filter((_, i) => i !== index);
-        setMedications(updatedMeds);
-        localStorage.setItem('medications', JSON.stringify(updatedMeds));
     };
 
     return (

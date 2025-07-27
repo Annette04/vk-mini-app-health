@@ -1,3 +1,4 @@
+
 import {
     Panel,
     PanelHeader,
@@ -12,23 +13,42 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { getFromCloud, setToCloud } from '../utils/vkCloudStorage';
 
 export const Profile = ({ id }) => {
     const routeNavigator = useRouteNavigator();
     const [formData, setFormData] = useState({
-        gender: '', // 'male' или 'female'
+        gender: '',
         age: '',
         height: '',
         weight: ''
     });
 
     useEffect(() => {
-        // Загрузка сохраненных данных из localStorage
-        const savedData = JSON.parse(localStorage.getItem('healthProfile'));
-        if (savedData) {
-            setFormData(savedData);
-        }
+        const fetchProfile = async () => {
+            const savedData = await getFromCloud('healthProfile');
+            if (savedData) {
+                setFormData(savedData);
+            }
+        };
+
+        fetchProfile();
     }, []);
+
+    const handleSubmit = async () => {
+        try {
+            const success = await setToCloud('healthProfile', formData);
+
+            if (success) {
+                routeNavigator.back();
+            } else {
+                alert('Ошибка при сохранении профиля');
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            alert('Произошла ошибка при сохранении');
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,11 +57,6 @@ export const Profile = ({ id }) => {
 
     const handleGenderChange = (e) => {
         setFormData(prev => ({ ...prev, gender: e.target.value }));
-    };
-
-    const handleSubmit = () => {
-        localStorage.setItem('healthProfile', JSON.stringify(formData));
-        routeNavigator.back();
     };
 
     return (

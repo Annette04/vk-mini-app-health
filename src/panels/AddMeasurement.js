@@ -2,6 +2,7 @@ import { Panel, PanelHeader, FormItem, Input, Button, Group, Div, PanelHeaderBac
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { getFromCloud, setToCloud } from '../utils/vkCloudStorage';
 
 export const AddMeasurement = ({ id }) => {
     const routeNavigator = useRouteNavigator();
@@ -30,7 +31,7 @@ export const AddMeasurement = ({ id }) => {
 
     const resetForm = () => {
         setMeasurement({
-            type: measurement.type, // сохраняем текущий тип
+            type: measurement.type,
             value1: '',
             value2: '',
             date: new Date().toISOString().split('T')[0],
@@ -39,8 +40,7 @@ export const AddMeasurement = ({ id }) => {
         });
     };
 
-    const handleSubmit = () => {
-        // Проверяем заполнение обязательных полей
+    const handleSubmit = async () => {
         if (
             (measurement.type === 'pressure' && (!measurement.value1 || !measurement.value2)) ||
             (measurement.type !== 'pressure' && !measurement.value1)
@@ -49,20 +49,26 @@ export const AddMeasurement = ({ id }) => {
             return;
         }
 
-        // Получаем текущие данные из localStorage
-        const measurements = JSON.parse(localStorage.getItem('healthMeasurements') || '[]');
+        try {
+            // Получаем текущие данные из VK Cloud
+            const measurements = await getFromCloud('healthMeasurements') || [];
 
-        // Добавляем новые данные
-        measurements.push(measurement);
+            // Добавляем новые данные
+            measurements.push(measurement);
 
-        // Сохраняем обновленные данные
-        localStorage.setItem('healthMeasurements', JSON.stringify(measurements));
+            // Сохраняем обновленные данные
+            const success = await setToCloud('healthMeasurements', measurements);
 
-        // Показываем уведомление
-        alert("Данные успешно сохранены");
-
-        // Очищаем форму
-        resetForm();
+            if (success) {
+                alert("Данные успешно сохранены");
+                resetForm();
+            } else {
+                alert("Ошибка при сохранении данных");
+            }
+        } catch (error) {
+            console.error('Error saving measurement:', error);
+            alert("Произошла ошибка при сохранении");
+        }
     };
 
     return (

@@ -1,14 +1,22 @@
 import {Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, Card} from '@vkontakte/vkui';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import { getFromCloud } from '../utils/vkCloudStorage';
 
 export const Home = ({ id, fetchedUser }) => {
   const { photo_200, city, first_name, last_name } = { ...fetchedUser };
   const routeNavigator = useRouteNavigator();
+  const [info, setInfo] = useState(null);
 
-  // Получаем данные из localStorage и парсим их в объект
-  const infoString = localStorage.getItem("healthProfile");
-  const info = infoString ? JSON.parse(infoString) : null;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profileData = await getFromCloud('healthProfile');
+      setInfo(profileData);
+    };
+
+    fetchProfile();
+  }, []);
 
   // Функция для расчета ИМТ
   const calculateBMI = () => {

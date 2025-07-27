@@ -12,6 +12,7 @@ import {
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { getFromCloud } from '../utils/vkCloudStorage';
 
 // Нормативные показатели
 const NORM_VALUES = {
@@ -28,13 +29,16 @@ export const Current = ({ id }) => {
     const [dailyData, setDailyData] = useState(null);
 
     useEffect(() => {
-        const savedMeasurements = JSON.parse(localStorage.getItem('healthMeasurements') || '[]');
-        // Добавляем временную метку для каждой записи
-        const measurementsWithTimestamps = savedMeasurements.map(m => ({
-            ...m,
-            timestamp: new Date(`${m.date}T${m.time}`).getTime()
-        }));
-        setMeasurements(measurementsWithTimestamps);
+        const fetchMeasurements = async () => {
+            const savedMeasurements = await getFromCloud('healthMeasurements') || [];
+            const measurementsWithTimestamps = savedMeasurements.map(m => ({
+                ...m,
+                timestamp: new Date(`${m.date}T${m.time}`).getTime()
+            }));
+            setMeasurements(measurementsWithTimestamps);
+        };
+
+        fetchMeasurements();
     }, []);
 
     useEffect(() => {
